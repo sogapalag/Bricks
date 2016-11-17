@@ -42,5 +42,8 @@ git clone https://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_awesome_vimrc.sh
 
 # generate ssh key
-ssh-keygen -t rsa -C "yan-zp@foxmail.com"
+ssh-keygen -t rsa -C "e-mail"
+
+# xclip
+sudo apt-get install xclip
 
