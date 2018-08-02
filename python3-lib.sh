@@ -36,6 +36,13 @@ sudo apt-get install python3-pip
 pip3 install jupyter
 sudo apt-get install python3-matplotlib
 
+# install R system
+sudo apt-get install r-base
+# sudo dpkg -i (download)rstudio.deb
+# sudo apt-get install -f (fix dependency)
+# download rstan; tar -xvzf rstan.tar.gz
+# https://github.com/stan-dev/rstan/wiki/Installing-RStan-on-Mac-or-Linux
+
 # ubuntu 18.04 default python3 supported
 #sudo apt-get install python3-numpy
 #sudo apt-get install python3-scipy
