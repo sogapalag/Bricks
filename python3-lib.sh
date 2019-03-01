@@ -18,7 +18,8 @@ sudo apt install flatpak
 sudo apt install gnome-software-plugin-flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-sudo apt-get install shadowsocks
+# sudo apt-get install shadowsocks
+# => v2ray
 # one might use below command first time without proxy switcher, may not work when chrome outdated, just update chrome.
 # chrome.exe --proxy-server="socks5://127.0.0.1:1080" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost"
     
@@ -89,4 +90,6 @@ sh ~/.vim_runtime/install_awesome_vimrc.sh
 
 # xclip
 sudo apt-get install xclip
+# xclip -sel clip < ~/.ssh/id_rsa.pub
+# https://help.github.com/en/articles/adding-a-new-ssh-key-to-your-github-account
 
