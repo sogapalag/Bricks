@@ -1,0 +1,16 @@
+in file
+~/.vim_runtime/sources_non_forked/vim-snipmate/plugin/snipMate.vim
+cpp alias c.
+
+need comment alias, if you don't want c.snippets while write cpp
+
+
+in file
+~/.vim_runtime/sources_non_forked/vim-snippets/snippets/cpp.snippets
+
+although extends C, but comment which not work. since first file alias.
+so I don't know the 'extends C' do any thing?
+anyway delete it.
+
+
+now we can write own cpp.snippets.
