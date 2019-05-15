@@ -1,1 +1,10 @@
 papercolor
+
+in .vim_runtime/vimrc/extends.vim
+
+set background=dark
+"colorscheme peaksea
+"colorscheme solarized
+"colorscheme ir_black
+"colorscheme desert
+colorscheme PaperColor
