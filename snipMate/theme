@@ -1,6 +1,6 @@
 papercolor
-
 in .vim_runtime/vimrc/extends.vim
+add below
 
 set background=dark
 "colorscheme peaksea
@@ -8,3 +8,23 @@ set background=dark
 "colorscheme ir_black
 "colorscheme desert
 colorscheme PaperColor
+
+
+
+in /usr/share/vim/vim80/syntax/cpp.vim
+add below
+
+" My extensions
+syn keyword cppType         mint
+syn keyword cppMyMacro      dbg cin cout assert
+" delete '/', since which may conflic with comment, 
+" maybe move c.vim comment block render after, might work. TODO
+syn match     cppMyOperator     display "\%(+\|-\|*\|=\|\^\|&\||\|!\|>\|<\|%\)=\?"
+syn match     cppMyOperator     display "&&\|||"
+
+in ~/.vim_runtime/sources_non_forked/papercolor-theme/colors/PaperColor.vim
+add below in cpp block.
+
+   exec 'hi cppMyOperator' . s:fg_aqua . s:ft_bold
+   exec 'hi cppMyMacro' . s:fg_olive . s:ft_bold
+
