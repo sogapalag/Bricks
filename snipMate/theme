@@ -10,7 +10,7 @@ set background=dark
 colorscheme PaperColor
 
 
-
+!!!!!!!! don't need below, (well, custom type might)
 in /usr/share/vim/vim80/syntax/cpp.vim
 add below
 
@@ -27,4 +27,31 @@ add below in cpp block.
 
    exec 'hi cppMyOperator' . s:fg_aqua . s:ft_bold
    exec 'hi cppMyMacro' . s:fg_olive . s:ft_bold
+!!!!!!...........
 
+use enhanced!
+
+in ~/.vim_runtime/sources_non_forked/
+git submodule add \
+https://github.com/octol/vim-cpp-enhanced-highlight.git
+
+
+in c.vim ends, custom
+syn match cOperator "\(<<\|>>\|[-+*/%&^|<>!=]\)="
+syn match cOperator "<<\|>>\|&&\|||\|++\|--\|->"
+syn match cOperator "[.!~*&%<>^|=,+-]"
+syn match cOperator "/[^/*=]"me=e-1
+syn match cOperator "/$"
+"syn match cOperator "&&\|||"
+"syn match cOperator    "[][]"
+"
+"" my custom 2019 05 17
+syn match cBraket   "[][]"
+syn match cBraket    "[();\\]"
+syn match cBraket display "[{}]"
+syn keyword cType mint
+
+
+in ~/.vim_runtime/sources_non_forked/papercolor-theme/colors/PaperColor.vim
+exec 'hi cBraket' . s:fg_nontext
+exec 'hi cOperator' . s:fg_aqua . s:ft_bold

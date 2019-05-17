@@ -198,6 +198,7 @@ snippet template_ks
 	}
 ## lib
 #
+#ds
 snippet dsu
 	struct Dsu {
 	    int n;
@@ -220,6 +221,33 @@ snippet dsu
 	    inline bool check(int x, int y) {
 	        return find(x) == find(y);
 		}
+	};
+snippet dsu_r
+	struct Dsu {
+	    int n;
+	    vector<int> p;
+	    vector<int> r;
+	    
+	    Dsu(int _n) { n = _n; p.resize(n); r.resize(n); init(); }
+	    inline void init() {
+	        for (int i = 0; i < n; i++) {
+	            p[i] = i;
+	            r[i] = 1;
+	        }
+	    }
+	    inline int find(int x) {
+	        return p[x] == x ? x: p[x] = find(p[x]);
+	    }
+	    inline bool join(int x, int y) {
+	        x = find(x); y = find(y);
+	        if (x == y) return false;
+	        if (r[x] < r[y]) swap(x, y);
+	        p[y] = x; r[x] += r[y];
+	        return true;
+	    }
+	    inline bool check(int x, int y) {
+	        return find(x) == find(y);
+	    }
 	};
 snippet fenwick
 	template <typename T=int>
@@ -308,6 +336,7 @@ snippet segtree
 	};
 	
 	typedef Segtree<Node> Seg;
+#math
 snippet modular
 	namespace math {
 	    const int MOD = 1000000007; // 998244353
@@ -615,4 +644,43 @@ snippet matrix
 	                A[i][j] = res[i][j];
 	    }
 	}
-
+# algo
+snippet kmp
+	const int N = 1005, P = 55;
+	int lc, ls;
+	char c[N], s[P];
+	int bac_s[P][26];
+	
+	void kmp_pre(int l, char p[], int bac[][26]){
+	    int b[P]; b[0]=-1;// kmp backup table
+	    int j = -1;
+	    for (int i=0; i < l;){
+	        while (j >= 0 && p[i] != p[j])
+	            j = b[j];
+	        i++; j++;
+	        b[i] = j;
+	    }
+	
+	    // bac[i][x]: when before matched length i, next coming char x
+	    // matched length
+	    for (int i=0; i<=l; i++){
+	        for (char x = 'a'; x <= 'z'; x++){
+	            int j = i;
+	            while (j >= 0 && x != p[j])
+	                j = b[j];
+	            bac[i][x - 'a'] = ++j;
+	        }
+	    }
+	}
+# *
+snippet bitop
+	#define ones(x) __builtin_popcount(x)
+	#define clz(x) __builtin_clz(x)
+	#define ctz(x) __builtin_ctz(x)
+	#define lbit(x) ((x)&(-(x)))
+	#define hbit(x) 1<<(31-__builtin_clz(x))
+	#define isp2(x) ((x) && !((x)&((x)-1)))
+	#define set(x, p) ((x) |= (1<<(p)))
+	#define unset(x, p) ((x) &= (~(1<<(p))))
+	#define flip(x, p) ((x) ^= (1<<(p)))
+	#define ck(x, p) ((x) & (1<<(p)))
