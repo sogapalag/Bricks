@@ -255,7 +255,7 @@ snippet fenwick
 	    int n;
 	    vector<T> v;
 	    
-	    Fenwick(int size = 100005) : n(size+1), v(n, 0) {}
+	    Fenwick(int size = 100005) : n(size), v(n+1, 0) {}
 	    inline void add(int p, T val) {
 	        for (; p <= n; p += (p&-p)) { v[p] += val; }
 	    }
@@ -671,6 +671,40 @@ snippet kmp
 	            bac[i][x - 'a'] = ++j;
 	        }
 	    }
+	}
+snippet bs_first
+	// when range [l, r), has property notP~P, want first P.
+	// when return r, means not found.
+	template <typename T>
+	T bs_fisrt(T l, T r, function<bool (T)> f) {
+	    assert(l < r);
+	    T mid;
+	    while (l != r) {
+	        mid = (l+r)/2;
+	        if (f(mid)) {
+	            r = mid;
+	        }else {
+	            l = mid + 1;
+	        }
+	    }
+	    return r;
+	}
+snippet bs_last
+	// when range [l, r), has property P~notP, want last P.
+	// when return l-1, means not found.
+	template <typename T>
+	T bs_last(T l, T r, function<bool (T)> f) {
+	    assert(l < r);
+	    T mid;
+	    while (l != r) {
+	        mid = (l+r)/2;
+	        if (f(mid)) {
+	            l = mid + 1;
+	        }else {
+	            r = mid;
+	        }
+	    }
+	    return r-1;
 	}
 # *
 snippet bitop
