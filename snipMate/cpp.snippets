@@ -28,46 +28,88 @@ snippet ll
 snippet ld
 	long double ${1};
 snippet pi
-	pair<int, int> ${1};
+	pair<int, int> ${1:p};
 snippet pl
-	pair<long long, long long> ${1};
+	pair<long long, long long> ${1:p};
 snippet pd
-	pair<double, double> ${1};
+	pair<double, double> ${1:p};
 snippet vi
-	vector<int> ${1};
+	vector<int> ${1:a(n)};
 snippet vl
-	vector<long long> ${1};
+	vector<long long> ${1:a(n)};
 snippet vpi
-	vector<pair<int, int>> ${1};
+	vector<pair<int, int>> ${1:a(n)};
+snippet vs
+	vector<string> ${1:s(n)};
+snippet vvi
+	vector<vector<int>> ${1:g(n)};
+snippet vvl
+	vector<vector<long long>> ${1:g(n)};
+snippet vec
+	vector<${1:Node}> ${2:a(n)};
 snippet map
-	map<${1:Key}, ${2:T}> ${3};
+	map<${1:int}, ${2:int}> ${3:mp};
+snippet set
+	set<${1:int}> ${2:st};
 snippet mset
-	multiset<${1:T}> ${2};
+	multiset<${1:int}> ${2:st};
 snippet mmap
-	multimap<${1:Key}, ${2:T}> ${3};
+	multimap<${1:int}, ${2:int}> ${3:mp};
 snippet uset
-	unordered_set<${1:T}> ${2};
+	unordered_set<${1:int}> ${2:st};
 snippet umap
-	unordered_map<${1:Key}, ${2:T}> ${3};
+	unordered_map<${1:int}, ${2:int}> ${3:mp};
 snippet umset
-	unordered_multiset<${1:T}> ${2};
+	unordered_multiset<${1:int}> ${2:st};
 snippet ummap
-	unordered_multimap<${1:Key}, ${2:T}> ${3};
+	unordered_multimap<${1:int}, ${2:int}> ${3:mp};
 snippet stack
-	stack<${1:T}> ${2};
+	stack<${1:int}> ${2:stk};
 snippet queue
-	queue<${1:T}> ${2};
+	queue<${1:int}> ${2:q};
 snippet pqueue
-	priority_queue<${1:T}> ${2};
+	priority_queue<${1:int}> ${2:pq};
+snippet maxheap
+	priority_queue<${1:int}> ${2:hp};
+snippet minheap
+	priority_queue<${1:int}, vector<$1>, greater<$1>> ${2:hp};
 # I/O
 snippet ci
-	cin >> ${1};
+	cin >> ${1:n};
+snippet c1
+	cin >> ${1:x};
+snippet c2
+	cin >> ${1:x} >> ${2:y};
+snippet c3
+	cin >> ${1:x} >> ${2:y} >> ${3:z};
 snippet co
 	cout << ${1};
 snippet cl
 	cout << ${1} << "\n";
 snippet debug
-	#define dbg(x) cerr<<#x<<" = "<<(x)<<endl;
+	#define LOCAL
+	string to_string(string s) { return '"' + s + '"'; }
+	string to_string(bool x) { return (x ? "T" : "F"); }
+	string to_string(const char* s) { return to_string((string)s); }
+	template <typename A, typename B>
+	string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+	template <typename V>
+	string to_string(V v) {
+	    bool f = true; string res = "[";
+	    for (const auto& x: v) {
+	        if (!f) res += ", ";
+	        f = false;
+	        res += to_string(x); } res += "]";
+	    return res;
+	}
+	void debug() { cerr << endl; }
+	template <typename H, typename... T>
+	void debug(H h, T... t) { cerr << " " << to_string(h); debug(t...); }
+	#ifdef LOCAL
+	#define dbg(args...) cerr<<"("<<#args<<") =", debug(args)
+	#else
+	#define dbg(args...) 2019
+	#endif
 ## Iteration
 #
 snippet ifi
@@ -103,15 +145,15 @@ snippet fd=
 		${0:${VISUAL}}
 	}
 snippet fa
-	for (auto& ${1:p}: ${2:v}) {
+	for (auto& ${1:x}: ${2:a}) {
 		${0:${VISUAL}}
 	}
 snippet fit
-	for (auto ${1:it} = ${2:v}.begin(); $1 != $2.end(); $1++) {
+	for (auto ${1:it} = ${2:a}.begin(); $1 != $2.end(); $1++) {
 		${0:${VISUAL}}
 	}
 snippet fitd
-	for (auto ${1:rit} = ${2:v}.rbegin(); $1 != $2.rend(); $1++) {
+	for (auto ${1:rit} = ${2:a}.rbegin(); $1 != $2.rend(); $1++) {
 		${0:${VISUAL}}
 	}
 snippet wh
@@ -129,23 +171,25 @@ snippet au
 snippet lbd
 	[${1}](${2}){${0:${VISUAL}}}
 snippet ms
-	memset(${1:a}, ${2:0}, sizeof $1);
+	memset(${1:dp}, ${2:0}, sizeof $1);
 snippet mp
 	make_pair(${1}, ${2});
 snippet pb
 	push_back(${1});
 snippet eb
 	emplace_back(${1});
+snippet em
+	emplace(${1});
 snippet all
-	${1:v}.begin(), $1.end()
+	${1:a}.begin(), $1.end()
 snippet lb
 	lower_bound(${1:a}, $1+${2:n}, ${3:val});
 snippet lbv
-	lower_bound(${1:v}.begin(), $1.end(), ${2:val});
+	lower_bound(${1:a}.begin(), $1.end(), ${2:val});
 snippet ub
 	upper_bound(${1:a}, $1+${2:n}, ${3:val});
 snippet ubv
-	upper_bound(${1:v}.begin(), $1.end(), ${2:val});
+	upper_bound(${1:a}.begin(), $1.end(), ${2:val});
 snippet posl
 	int ${1:i} = lower_bound(${2:a}, $2+${3:n}, ${4:val}) - $2;
 snippet posu
@@ -155,7 +199,7 @@ snippet poslv
 snippet posuv
 	int ${1:i} = upper_bound(${2:a}.begin(), $2.end(), ${3:val}) - $2.begin();
 snippet dedup
-	sort(${1:v}.begin(), $1.end());
+	sort(${1:a}.begin(), $1.end());
 	$1.erase(unique($1.begin(), $1.end()), $1.end());
 ## template
 #
@@ -292,8 +336,8 @@ snippet segtree
 	    }
 	    inline void update(int p, T val) {
 	        assert(p>=0);
-	        for (v[p += n] = val; p > 1; p >>= 1) {
-	            v[p>>1] = v[p] + v[p^1];
+	        for (v[p += n] = val; p >>= 1;) {
+	            v[p] = v[p<<1] + v[p<<1|1];
 	        }
 	    }
 	    inline T query(int l, int r) {
@@ -336,7 +380,1081 @@ snippet segtree
 	};
 	
 	typedef Segtree<Node> Seg;
-#math
+snippet seglazy
+	template <typename T, typename U>
+	struct Seglazy {
+	    static const int H = 17; //20
+	    static const int SZ = 1<<H;
+	    int sz_v;
+	    const T ID;  // identity
+	    const U UN;  // not info
+	    vector<T> v; // tree
+	    vector<U> d; // lazy
+	    
+	    Seglazy() : sz_v(SZ<<1), ID(), UN(0), v(sz_v, 0), d(sz_v, 0) {
+	        //v.resize(sz_v);
+	        //d.resize(sz_v);
+	    }
+	    inline int len(int p) {
+	        return 1 << (H + __builtin_clz(p) - 31);
+	    }
+	    void build(int p=1, int l=0, int r=SZ) {
+	        if (l + 1 == r) {
+	            //set leaf
+	            return;
+	        }
+	        assert(l != r);
+	        int m = (l+r)>>1, pl = p<<1, pr = p<<1|1;
+	        build(pl, l, m);
+	        build(pr, m, r);
+	        v[p] = v[pl] + v[pr];
+	    }
+	    inline void apply(int p) {// do!! use info, may need length, pass l, r in
+	        v[p] += d[p] * len(p); //.x
+	    }
+	    inline void store(int p, const U& val) {// do!! store info, careful!! info chain
+	        d[p] += val;
+	    }
+	    inline void push(int p) {
+	        apply(p);
+	        if (p < SZ) {
+	            store(p<<1, d[p]);
+	            store(p<<1|1, d[p]);
+	        }
+	        d[p] = UN;
+	    }
+	    void update(int _l, int _r, const U& val, int p=1, int l=0, int r=SZ) {
+	        if (d[p] != UN) push(p);
+	        if (_r <= l || r <= _l) return;
+	        if (_l <= l && r <= _r) { // update by info
+	            store(p, val);
+	            push(p);
+	            return;
+	        }
+	        int m = (l+r)>>1, pl = p<<1, pr = p<<1|1;
+	        update(_l, _r, val, pl, l, m);
+	        update(_l, _r, val, pr, m, r);
+	        v[p] = v[pl] + v[pr];
+	    }
+	    T query(int _l, int _r, int p=1, int l=0, int r=SZ) {
+	        if (d[p] != UN) push(p);
+	        if (_r <= l || r <= _l) { return ID; }
+	        if (_l <= l && r <= _r) { return v[p]; }
+	        int m = (l+r)>>1, pl = p<<1, pr = p<<1|1;
+	        return query(_l, _r, pl, l, m) + query(_l, _r, pr, m, r);
+	    }    
+	};	
+	
+	struct Node {// monoid
+	    int x;
+	    
+	    Node() : x(-0x3f3f3f3f) {} // write your own identity
+	    Node(int _x) : x(_x) {}
+	    Node(const Node& _r) : x(_r.x) {}// write your own
+	    Node& operator = (const Node& _r) {
+	        x = _r.x; // write your own
+	        return *this;
+	    }
+	    Node& operator += (const Node& _r) {
+	        x = max(x, _r.x); // write your own  !! may not communitative
+	        return *this;
+	    }
+	    friend Node operator + (const Node& _lhs, const Node& _rhs) {
+	        return Node(_lhs) += _rhs; // derive from +=
+	    }
+	};
+	
+	using Seg=Seglazy<Node, int>;
+snippet rmq
+	template <typename T=int>
+	struct Rmq {
+	    vector<T> raw;
+	    static const int LOG = 17; // 20;
+	    int k;
+	    int n;
+	    vector<int> st[LOG];
+	    Rmq(vector<T> _v) { // pass in vec[0, n)
+	        raw = _v;
+	        n = raw.size();
+	        k = 32 - __builtin_clz(n);
+	        for (int j = 0; j < k; j++) {
+	            st[j].resize(n);
+	        }
+	        build();
+	    }
+	    inline int comp(int x, int y) { // DO! > max
+	        return raw[x] < raw[y] ? x : y;
+	    }
+	    void build() {
+	        for (int i = 0; i < n; i++) {
+	            st[0][i] = i;
+	        }
+	        for (int j = 1; j < k; j++) {
+	            for (int i = 0; i + (1<<j) <= n; i++) {
+	                st[j][i] = comp(st[j-1][i], st[j-1][i + (1<<(j-1))]);
+	            }
+	        }
+	    }
+	    // [l, r)
+	    inline int query_id(int l, int r) {
+	        assert(0 <= l && l < r && r <= n);
+	        int j = 31 - __builtin_clz(r - l);
+	        return comp(st[j][l], st[j][r - (1<<j)]);
+	    }
+	    inline T query(int l, int r) {
+	        return raw[query_id(l, r)];
+	    }
+	};
+# graph
+snippet graph_sim
+	struct Graph {
+	    int n, m;
+	    vector<vector<int>> g;
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n+1);
+	    }
+	    Graph(int _n, int _m) : n(_n), m(_m) {
+	        assert(n >= 1);
+	        assert(1ll*n*(n-1)/2 >= m);
+	        g.resize(n+1);
+	        input();
+	    }
+	    inline void add(int u, int v) {
+	        assert(1 <= u && u <= n);
+	        assert(1 <= v && v <= n);
+	        assert(u != v);
+	        g[u].emplace_back(v);
+	        g[v].emplace_back(u); // digraph remove
+	    }
+	    void input() {
+	        int u, v;
+	        for (int i = 0; i < m; i++) {
+	            cin >> u >> v;
+	            add(u, v);
+	        }
+	    }
+	};
+snippet graph_sim_scc_tarjan
+	struct Graph {
+	    int n, m;
+	    vector<vector<int>> g;
+	/////////////////////////////////////
+	// algo work for multi-edge, change vector<multiset<int>> g;
+	// remove above, attach snip, or overrite
+	/////////////////////////////////////
+	    int tim;
+	    vector<int> low;
+	    vector<int> num;
+	    vector<bool> trk;
+	    vector<int> stk;
+	    void scc_dfs(int u);
+	    void scc_run();
+	};
+	
+	//int gloc, glocnt;
+	
+	void Graph::scc_dfs(int u) {
+	    low[u] = num[u] = tim++;
+	    stk.emplace_back(u);
+	    trk[u] = true;
+	    for (int v: g[u]){
+	        if (!num[v])
+	            scc_dfs(v);
+	        if (trk[v])
+	            low[u] = min(low[u], low[v]);
+	    }
+	    // into scc
+	    if (low[u] == num[u]){
+	        // init scc sub_glob here
+	        while(true){
+	            int k = stk.back();
+	            stk.pop_back(); trk[k] = false;
+	            // calc this scc's nodes here
+	            if (k == u)
+	                break;
+	        }
+	        // calc scc sub_glob here
+	    }
+	}
+	
+	void Graph::scc_run(){
+	    // set global val here
+	    stk.reserve(n);
+	    tim = 1;
+	    low = vector<int>(n+1, 0);
+	    num = vector<int>(n+1, 0);
+	    trk = vector<bool>(n+1, false);
+	    for (int u = 1; u <= n; u++) {
+	        if (!num[u])
+	            scc_dfs(u);
+	    }
+	}
+snippet graph
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+			m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        pos = vector<int>(n, 0);
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	    void dfs(int u) {
+	        for (; pos[u] < g[u].size(); pos[u]++) {
+	            int i = g[u][pos[u]];
+	            int v = e[i].u ^ e[i].v ^ u;
+	            // rule
+	            dfs(v);
+	        }
+	    }
+	};
+snippet graph_scc_tarjan
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	    }
+	    Graph(int _n, int _m) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        input(_m);
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        g[u].emplace_back(e.size());
+	        g[v].emplace_back(e.size()); // digraph remove
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	    int tim;
+	    vector<int> low;
+	    vector<int> num;
+	    vector<int> stk;
+	    vector<bool> trk;
+	    void scc_dfs(int u);
+	    void scc_run();
+	};
+	
+	//int gloc, glocnt;
+	
+	void Graph::scc_dfs(int u) {
+	    low[u] = num[u] = tim++;
+	    stk.emplace_back(u);
+	    trk[u] = true;
+	    for (; pos[u] < g[u].size(); pos[u]++){
+	        int i = g[u][pos[u]];
+	        int v = e[i].u ^ e[i].v ^ u;
+	        if (!num[v])
+	            scc_dfs(v);
+	        if (trk[v])
+	            low[u] = min(low[u], low[v]);
+	    }
+	    // into scc
+	    if (low[u] == num[u]){
+	        // init scc sub_glob here
+	        while(true){
+	            int k = stk.back();
+	            stk.pop_back(); trk[k] = false;
+	            // calc this scc's nodes here
+	            if (k == u)
+	                break;
+	        }
+	        // calc scc sub_glob here
+	    }
+	}
+	
+	void Graph::scc_run(){
+	    // set global val here
+	    stk.reserve(n);
+	    tim = 1;
+	    pos = vector<int>(n, 0);
+	    low = vector<int>(n, 0);
+	    num = vector<int>(n, 0);
+	    trk = vector<bool>(n, false);
+	    for (int u = 0; u < n; u++) {
+	        if (!num[u])
+	            scc_dfs(u);
+	    }
+	}
+snippet graph_euler
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0){
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        pos = vector<int>(n, 0);
+	        is_digraph = _di;
+	        if (is_digraph) {
+	            indeg = vector<int>(n, 0);
+	            outdeg = vector<int>(n, 0);
+	        } else {
+	            deg = vector<int>(n, 0);
+	        }
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	    vector<int> deg;
+	    vector<int> indeg;
+	    vector<int> outdeg;
+	    vector<int> path;
+	    // Hierholzer’s
+	    pair<int, int> _euler_entry_un();
+	    pair<int, int> _euler_entry_di();
+	    pair<int, int> euler_entry();
+	    void euler_dfs(int u);
+	    int euler_run();
+	};
+	
+	void Graph::euler_dfs(int u) {
+	    for (; pos[u] < g[u].size(); pos[u]++) {
+	        int i = g[u][pos[u]];
+	        if (e[i].cost) {
+	            e[i].cost--;
+	            int v = e[i].u ^ e[i].v ^ u;
+	            euler_dfs(v);
+	        }
+	    }
+	    // a reversed chain, must be end time. or alternate method.
+	    // consider 1->2->2->3
+	    path.emplace_back(u);
+	}
+	pair<int, int> Graph::_euler_entry_un() {
+	    assert(!is_digraph);
+	    int odd_cnt = 0;
+	    int start = 0;
+	    for (int u = 0; u < n; u++) {
+	        if (deg[u] & 1) {
+	            odd_cnt++;
+	            start = u;
+	        }
+	    }
+	    if (odd_cnt > 2)
+	        return {-1, -1};
+	    assert(odd_cnt != 1);
+	    if (odd_cnt)
+	        return {1, start};
+	    return {0, start};
+	}
+	
+	// -1, no path
+	// 0, cycle
+	// 1, semi-euler, aka, path
+	pair<int, int> Graph::_euler_entry_di() {
+	    assert(is_digraph);
+	    int odd_cnt = 0;
+	    int start = 0;
+	    for (int u = 0; u < n; u++) {
+	        if (indeg[u] == outdeg[u])
+	            continue;
+	        if (outdeg[u] > indeg[u] + 1)
+	            return {-1, -1};
+	        if (indeg[u] > outdeg[u] + 1)
+	            return {-1, -1};
+	        odd_cnt++;
+	        if (outdeg[u] == indeg[u] + 1)
+	            start = u;
+	    }
+	    if (odd_cnt > 2)
+	        return {-1, -1};
+	    assert(odd_cnt != 1);
+	    if (odd_cnt)
+	        return {1, start};
+	    return {0, start};
+	}
+	int Graph::euler_run() {
+	    int flag, start;
+	    tie(flag, start) = is_digraph? _euler_entry_di() : _euler_entry_un();
+	    if (flag < 0)
+	        return -1;
+	    path.clear();
+	    path.reserve(m+1);
+	    euler_dfs(start);
+	    // not connected
+	    if ((int) path.size() < m+1)
+	        return -1;
+	    return flag;
+	}
+snippet graph_dijkstra
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v, c;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v >> c;
+	            u--; v--; // input 1-based
+	            add(u, v, c);
+	        }
+	    }
+	    template <typename T=int>
+	    vector<T> dijkstra(int s);
+	};
+	
+	// single source shortest path
+	template <typename T>
+	vector<T> Graph::dijkstra(int s) {
+	    // modify T's INF
+	    const int INF = 0x3f3f3f3f;
+	    vector<bool> trk(n, false);
+	    vector<T> d(n, INF);
+	    d[s] = 0;
+	    auto comp = [&](int x, int y){
+	        return d[x] > d[y];
+	    };
+	    priority_queue<int, vector<int>, decltype(comp)> pq(comp);
+	    pq.push(s);
+	    while (!pq.empty()) {
+	        int u = pq.top();
+	        pq.pop();
+	        if (trk[u])
+	            continue;
+	        trk[u] = true;
+	        for (int i: g[u]) {
+	            int v = e[i].u ^ e[i].v ^ u;
+	            if (d[v] > d[u] + e[i].cost) {
+	                d[v] = d[u] + e[i].cost;
+	                pq.push(v);
+	            }
+	        }
+	    }
+	    return d;
+	}
+snippet graph_01bfs
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v, c;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v >> c;
+	            u--; v--; // input 1-based
+	            add(u, v, c);
+	        }
+	    }
+	    template <typename T=int>
+	    vector<T> _01bfs(int s);
+	};
+	
+	// work when cost only 0 or c
+	template <typename T>
+	vector<T> Graph::_01bfs(int s) {
+	    const int INF = 0x3f3f3f3f;
+	    vector<T> d(n, INF);
+	    d[s] = 0;
+	    deque<int> q;
+	    q.push_front(s);
+	    while (!q.empty()) {
+	        int u = q.front();
+	        q.pop_front();
+	        for (int i: g[u]) {
+	            int v = e[i].u ^ e[i].v ^ u;
+	            if (d[v] > d[u] + e[i].cost) {
+	                d[v] = d[u] + e[i].cost;
+	                if (e[i].cost)
+	                    q.push_back(v);
+	                else
+	                    q.push_front(v);
+	            }
+	        }
+	    }
+	    return d;
+	}
+snippet graph_bellman_ford
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v, c;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v >> c;
+	            u--; v--; // input 1-based
+	            add(u, v, c);
+	        }
+	    }
+	    template <typename T=int>
+	    vector<T> bellman_ford(int s);
+	};
+	
+	// single source shortest path
+	// allow negative, but not -cycle
+	template <typename T>
+	vector<T> Graph::bellman_ford(int s) {
+	    const int INF = 0x3f3f3f3f;
+	    vector<T> d(n, INF);
+	    d[s] = 0;
+	    // if detect, add another round
+	    for (int i = 0; i < n-1; i++) {
+	        // add flag early stop for constant optimization
+	        for (auto& k: e) {
+	            if (d[k.u] < INF && d[k.v] > d[k.u] + k.cost)
+	                d[k.v] = d[k.u] + k.cost;
+	        }
+	    }
+	    return d;
+	}
+snippet graph_mat_floyd_warshall
+	const int INF = 0x3f3f3f3f;
+	const int N = 300; 
+	
+	int cost[N][N];
+	int d[N][N];
+	memcpy(d, cost, sizeof cost);
+	int n = 300;
+	
+	for (int k = 0; k < n; k++) {
+	    for (int i = 0; i < n; i++) {
+	        for (int j = 0; j < n; j++) {
+	            if (d[i][k] < INF && d[k][j] < INF) {// for negative
+	                d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+	            }
+	        }
+	    }
+	}
+snippet graph_mat_dijkstra
+	const int INF = 0x3f3f3f3f;
+	const int N = 3000; 
+	
+	int cost[N][N];
+	// move above global
+	
+	memset(cost, INF, sizeof cost);
+	
+	int n, m;
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) {
+	    cost[i][i] = 0;
+	}
+	struct Edge {
+	    int u, v;
+	    int c;
+	};
+	vector<Edge> e(m);
+	for (int i = 0; i < m; i++) {
+	    int x, y, z;
+	    cin >> x >> y >> z;
+	    x--; y--; // 1-based
+	    cost[x][y] = cost[y][x] = min(cost[x][y], z);
+	    e[i] = {x, y, z};
+	}
+	
+	auto dijkstra = [&](int s){
+	    vector<int> d(n, INF);
+	    vector<bool> trk(n, false);
+	    d[s] = 0;
+	    while (true) {
+	        int mindis = INF;
+	        int u = -1;
+	        for (int i = 0; i < n; i++) {
+	            if (!trk[i] && d[i] < mindis) {
+	                u = i; mindis = d[i];
+	            }
+	        }
+	        if (!~u) break;
+	        trk[u] = true;
+	        for (int v = 0; v < n; v++) {
+	            if (!trk[v] && d[v] > d[u] + cost[u][v]) {
+	                d[v] = d[u] + cost[u][v];
+	            }
+	        }
+	    }
+	    return d;
+	};
+	
+	auto d = dijkstra(0);
+snippet graph_lca_bl
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        pos = vector<int>(n, 0);
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	
+	    static const int LOG = 18; // 21;
+	    int k;
+	    vector<int> up[LOG];
+	    int tim;
+	    vector<int> bg;
+	    vector<int> nd;
+	    void prep(int root);
+	    void _dfs(int u, int pa) {
+	        bg[u] = tim++;
+	        up[0][u] = pa;
+	        for (int j = 1; j <= k; j++) {
+	            up[j][u] = up[j-1][up[j-1][u]];
+	        }
+	        for (; pos[u] < g[u].size(); pos[u]++) {
+	            int i = g[u][pos[u]];
+	            int v = e[i].u ^ e[i].v ^ u;
+	            // rule
+	            if (v != pa) _dfs(v, u);
+	        }
+	        nd[u] = tim++;
+	    }
+	    inline bool _is_ancestor(int u, int v) {
+	        return bg[u] <= bg[v] && nd[u] >= nd[v];
+	    }
+	    inline int lca(int u, int v);
+	};
+	void Graph::prep(int root=0) {
+	    k = 32 - __builtin_clz(n);
+	    for (int j = 0; j <= k; j++) {
+	        up[j].resize(n);
+	    }
+	    bg = vector<int>(n, 0);
+	    nd = vector<int>(n, 0);
+	    tim = 1;
+	    _dfs(root, root);
+	}
+	inline int Graph::lca(int u, int v) {
+	    if (_is_ancestor(u, v)) return u;
+	    if (_is_ancestor(v, u)) return v;
+	    for (int j = k; j >= 0; j--) {
+	        if(!_is_ancestor(up[j][u], v))
+	            u = up[j][u];
+	    }
+	    return up[0][u];
+	}
+snippet graph_bridge
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        pos = vector<int>(n, 0);
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	
+	    int tim;
+	    vector<int> low;
+	    vector<int> bg;
+	    void dfs(int u, int p=-1) {
+	        low[u] = bg[u] = tim++;
+	        for (; pos[u] < g[u].size(); pos[u]++) {
+	            int i = g[u][pos[u]];
+	            if (p == i) continue; // for un-di, not use same edge. note, can multi-edge
+	            int v = e[i].u ^ e[i].v ^ u;
+	            if (bg[v]) {
+	                low[u] = min(low[u], bg[v]);
+	            } else {
+	                dfs(v, i);
+	                low[u] = min(low[u], low[v]);
+	                if (bg[u] < low[v]) {
+	                    // bridge found
+	                }
+	            }
+	        }
+	    }
+	    void dfs_all();
+	};
+	void Graph::dfs_all() {
+	    tim = 1;
+	    low.assign(n, 0);
+	    bg.assign(n, 0);
+	    for (int i = 0; i < n; i++) {
+	        if (!bg[i]) dfs(i);
+	    }
+	}
+snippet graph_cut_point
+	struct Graph {
+	    struct Edge {
+	        int u, v;
+	        int cost;
+	        Edge(int _u, int _v, int _cost) : u(_u), v(_v), cost(_cost) {}
+	    };
+	    int n, m;
+	    bool is_digraph;
+	    vector<vector<int>> g;
+	    vector<Edge> e;
+	
+	    Graph(int _n) : n(_n), m(0) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        set_di(false);
+	    }
+	    Graph(int _n, int _m, bool _di=false) : n(_n) {
+	        assert(n >= 1);
+	        g.resize(n);
+	        e.reserve(_m);
+	        m = 0;
+	        set_di(_di);
+	        input(_m);
+	    }
+	    void set_di(bool _di) {
+	        pos = vector<int>(n, 0);
+	        is_digraph = _di;
+	    }
+	    inline void add(int u, int v, int cost=1) {
+	        assert(0 <= u && u < n);
+	        assert(0 <= v && v < n);
+	        if (is_digraph) {
+	            //outdeg[u]++; indeg[v]++;
+	            g[u].emplace_back(m);
+	
+	        } else {
+	            //deg[u]++; deg[v]++;
+	            g[u].emplace_back(m);
+	            g[v].emplace_back(m);
+	        }
+	        e.emplace_back(u, v, cost);
+	        m++;
+	    }
+	    void input(int _m) {
+	        int u, v;
+	        for (int i = 0; i < _m; i++) {
+	            cin >> u >> v;
+	            u--; v--; // input 1-based
+	            add(u, v);
+	        }
+	    }
+	    vector<int> pos;
+	
+	    int tim;
+	    vector<int> low;
+	    vector<int> bg;
+	    void dfs(int u, int p=-1) {
+	        low[u] = bg[u] = tim++;
+	        int ch_cnt = 0;
+	        for (; pos[u] < g[u].size(); pos[u]++) {
+	            int i = g[u][pos[u]];
+	            if (p == i) continue; // for un-di, not use same edge. note, can multi-edge
+	            int v = e[i].u ^ e[i].v ^ u;
+	            if (bg[v]) {
+	                low[u] = min(low[u], bg[v]);
+	            } else {
+	                dfs(v, i);
+	                low[u] = min(low[u], low[v]);
+	                if (bg[u] <= low[v] && ~p) {
+	                    // found u
+	                }
+	                ch_cnt++;
+	            }
+	        }
+	        if (!~p && ch_cnt > 1) {
+	            // found u
+	        }
+	    }
+	    void dfs_all();
+	};
+	void Graph::dfs_all() {
+	    tim = 1;
+	    low.assign(n, 0);
+	    bg.assign(n, 0);
+	    for (int i = 0; i < n; i++) {
+	        if (!bg[i]) dfs(i);
+	    }
+	}
+# math
 snippet modular
 	namespace math {
 	    const int MOD = 1000000007; // 998244353
@@ -609,6 +1727,22 @@ snippet modular_sim
 	template <typename T, typename U> inline bool operator!=(const modular<T>& _lhs, const U& _rhs) { return !(_lhs == _rhs); }
 	template <typename T, typename U> inline bool operator!=(const U& _lhs, const modular<T>& _rhs) { return !(_lhs == _rhs); }
 	typedef modular<int> mint;
+snippet mod_table
+	int _n = n;
+	vector<mint> fac(_n+1);
+	vector<mint> ifac(_n+1);
+	vector<mint> inv(_n+1);
+	auto build = [&](){
+	    fac[0] = fac[1] = 1;
+	    ifac[0] = ifac[1] = 1;
+	    inv[1] = 1;
+	    for (int i = 2; i <= _n; i++) {
+	        fac[i] = fac[i-1] * i;
+	        inv[i] = (-MOD/i) * inv[MOD%i];
+	        ifac[i] = ifac[i-1] * inv[i];
+	    }
+	};
+	build();
 snippet matrix
 	namespace math {
 	    // A = A X B, 0-based, n:dim
@@ -644,6 +1778,576 @@ snippet matrix
 	                A[i][j] = res[i][j];
 	    }
 	}
+snippet sieve
+	vector<int> prime;
+	auto sieve = [&](int _n = 45000){
+	    vector<bool> is(_n+1, true);
+	    is[0] = is[1] = false;
+	    for (int p = 2; p*p <= _n; p++) {
+	        if (is[p]) {
+	            for (int i = p*p; i <= _n; i += p) {
+	                is[i] = false;
+	            }
+	        }
+	    }
+	    for (int i = 2; i <= _n; i++) {
+	        if (is[i])
+	            prime.emplace_back(i);
+	    }
+	};
+	auto decomp = [&](int x){
+	    assert(x > 1);
+	    vector<pair<int, int>> res;
+	    for (int p: prime) {
+	        if (p*p > x) break;
+	        if (x % p == 0) {
+	            int e = 0;
+	            while (x % p == 0) {
+	                e++; x /= p;
+	            }
+	            res.emplace_back(p, e);
+	        }
+	    }
+	    if (x != 1)
+	        res.emplace_back(x, 1);
+	    return res;
+	};
+	auto divs = [&](int x){
+	    assert(x > 1);
+	    vector<int> res;
+	    res.emplace_back(1);
+	    for (auto& p: decomp(x)) {
+	        int b, e;
+	        tie(b, e) = p;
+	        int sz = res.size();
+	        int y = 1;
+	        while (e--) {
+	            y *= b;
+	            for (int i = 0; i < sz; i++) {
+	                res.emplace_back(res[i] * y);
+	            }
+	        }
+	    }
+	    return res;
+	};
+snippet mobius
+	auto mobius = [&](int _n = 1'000'006){
+	    vector<int> mu(_n+1, 1);
+	    int cnt, x;
+	    for (int i = 2; i <= _n; i++) {
+	        cnt = 0, x = i;
+	        for (const int& p: prime) {
+	            if (p*p > x) break;
+	            if (x % p == 0) {
+	                cnt++; x /= p;
+	            }
+	            if (x % p == 0) {
+	                mu[i] = 0; break;
+	            }
+	        }
+	        if (x != 1) cnt++;
+	        mu[i] *= (cnt&1)?-1:1;
+	    }
+	    return mu;
+	};
+	auto mu = mobius();
+snippet poly
+	mint GEN = 3; // generator 
+	
+	const int FFTH = 18; // 21;
+	const int FFTN = 1<<FFTH; 
+	int REV[FFTH][FFTN];
+	void build_rev() {
+	    for (int h = 0; h < FFTH; h++) {
+	        int n = 1 << (h+1);
+	        REV[h][0] = 0;
+	        for (int i = 1; i < n; i++) {
+	            REV[h][i] = (REV[h][i>>1] >> 1) | ((i&1) << h);
+	        }
+	    }
+	}
+	bool is_build_rev = false;
+	mint inv[FFTN];
+	void build_inv(){
+	    inv[1] = 1;
+	    for (int i = 2; i < FFTN; i++) {
+	        inv[i] = (-MOD/i) * inv[MOD%i];
+	    }
+	};
+	bool is_build_inv = false;
+	
+	template <typename T=mint>
+	struct Poly : vector<T> {
+	    using vector<T>::vector;
+	    Poly() {}
+	    Poly(initializer_list<T> list) : vector<T>(list) {}
+	
+	};
+	template <typename T=mint>
+	inline Poly<T>& ntt(Poly<T>& a, bool is_inv=false) {
+	    if (!is_build_rev) { is_build_rev = true; build_rev(); }
+	    int n = a.size();
+	    assert(n>1 && (n&(n-1)) == 0);
+	    int h = 31 - __builtin_clz(n) - 1;
+	    if (is_inv) {
+	        T i_n = T(1)/n;
+	        for (int i = 0; i < n; i++) {
+	            a[i] *= i_n;
+	        }
+	        reverse(a.begin()+1, a.end());
+	    }
+	    for (int i = 0; i < n; i++) {
+	        int j = REV[h][i];
+	        if (i < j) swap(a[i], a[j]);
+	    }
+	    for (int m = 1; m < n; m<<=1) {
+	        int l = m<<1;
+	        assert((MOD-1) % l == 0);
+	        T _w = GEN.exp((MOD-1)/l);
+	        for (int i = 0; i < n; i+=l) {
+	            T w = 1;
+	            for (int j = 0; j < m; j++) {
+	                T x = a[i+j];
+	                T y = w * a[i+j+m];
+	                a[i+j] = x + y;
+	                a[i+j+m] = x - y;
+	                w *= _w;
+	            }
+	        }
+	    }
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T>& trim(Poly<T>& a) {
+	    while (!a.empty() && a.back() == 0) {
+	        a.pop_back();
+	    }
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T>& operator*=(Poly<T>& a, const Poly<T>& _p) {
+	    if (a.empty() || _p.empty()) { a.clear(); return a; }
+	    int n = a.size() + _p.size() - 1;
+	    int old = n;
+	    if (n == 1) {a[0] *= _p[0]; return a; }
+	    int _n = 1 << (31-__builtin_clz(n));
+	    if (_n < n) n = _n<<1;
+	    auto p = _p;
+	    p.resize(n); ntt(p);
+	    a.resize(n); ntt(a);
+	    for (int i = 0; i < n; i++) {
+	        a[i] *= p[i];
+	    }
+	    ntt(a, true); a.resize(old);
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T>& operator+=(Poly<T>& a, const Poly<T>& _p) {
+	    int n = _p.size();
+	    if (a.size() < n) {
+	        a.resize(n);
+	    }
+	    for (int i = 0; i < n; i++) {
+	        a[i] += _p[i];
+	    }
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T>& operator-=(Poly<T>& a, const Poly<T>& _p) {
+	    int n = _p.size();
+	    if (a.size() < n) {
+	        a.resize(n);
+	    }
+	    for (int i = 0; i < n; i++) {
+	        a[i] -= _p[i];
+	    }
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T> inverse(const Poly<T>& a, int n=0) {
+	    assert(!a.empty());
+	    if (!n) n = a.size();
+	    Poly<T> res = {1/a[0]};
+	    int k = 1; // res size
+	    while (k < n) {
+	        k <<= 1;
+	        Poly<T> a_cut(a.begin(), a.begin() + min((int)a.size(), k));
+	        Poly<T> x = res * res * a_cut;
+	        res.resize(k);
+	        for (int i = k>>1; i < min((int)x.size(), k); i++) {
+	            res[i] -= x[i];
+	        }
+	    }
+	    res.resize(n);
+	    return res;
+	}
+	template <typename T=mint>
+	Poly<T>& operator/=(Poly<T>& a, const Poly<T>& _p) {
+	    int n = a.size(), m = _p.size();
+	    if (n < m) { a.clear(); return a; }
+	    a *= inverse(_p);
+	    a.resize(n-m+1);
+	    return a;
+	}
+	template <typename T=mint>
+	Poly<T> sqrt(const Poly<T>& a, int n=0) {
+	    assert(!a.empty() && a[0] == 1); // TODO need generalize ^{1/2}
+	    if (!n) n = a.size();
+	    Poly<T> res = {1};
+	    int k = 1;  // res size
+	    T i2 = T(1)/2;
+	    while (k < n) {
+	        k <<= 1;
+	        Poly<T> x(a.begin(), a.begin() + min((int)a.size(), k));
+	        res.resize(k);
+	        x *= inverse(res);
+	        for (int i = k>>1; i < min((int)x.size(), k); i++) {
+	            res[i] = x[i] * i2;
+	        }
+	    }
+	    res.resize(n);
+	    return res;
+	}
+	template <typename T=mint>
+	Poly<T>& operator%=(Poly<T>& a, const Poly<T>& _p) {
+	    int n = a.size(), m = _p.size();
+	    assert(m > 0);
+	    if (n >= m) {
+	        Poly<T> c = (a/_p) * _p;
+	        a.resize(m-1);
+	        for (int i = 0; i < m-1; i++) {
+	            a[i] -= c[i];
+	        }
+	    }
+	    return a;
+	}
+	
+	template <typename T=mint> inline Poly<T> operator*(const Poly<T>& _lhs, const Poly<T>& _rhs) { Poly<T> res(_lhs); return res *= _rhs; }
+	template <typename T=mint> inline Poly<T> operator+(const Poly<T>& _lhs, const Poly<T>& _rhs) { Poly<T> res(_lhs); return res += _rhs; }
+	template <typename T=mint> inline Poly<T> operator-(const Poly<T>& _lhs, const Poly<T>& _rhs) { Poly<T> res(_lhs); return res -= _rhs; }
+	template <typename T=mint> inline Poly<T> operator/(const Poly<T>& _lhs, const Poly<T>& _rhs) { Poly<T> res(_lhs); return res /= _rhs; }
+	template <typename T=mint> inline Poly<T> operator%(const Poly<T>& _lhs, const Poly<T>& _rhs) { Poly<T> res(_lhs); return res %= _rhs; }
+	
+	template <typename T=mint>
+	Poly<T> integral(const Poly<T>& a, int n=0) {
+	    if (!is_build_inv) { is_build_inv = true; build_inv(); }
+	    if (!n) n = a.size();
+	    Poly<T> res = a;
+	    res.resize(n+1);
+	    for (int i = n; i >= 1; i--) {
+	        res[i] = res[i-1] * inv[i];
+	    }
+	    res[0] = 0;
+	    return res;
+	}
+	template <typename T=mint>
+	Poly<T> derivative(const Poly<T>& a, int n=0) {
+	    if (!n) n = a.size();
+	    Poly<T> res = a;
+	    res.resize(n);
+	    for (int i = 0; i < n-1; i++) {
+	        res[i] = res[i+1] * (i+1);
+	    }
+	    res.pop_back();
+	    return res;
+	}
+	template <typename T=mint>
+	Poly<T> logarithm(const Poly<T>& a, int n=0) {
+	    if (!n) n = a.size();
+	    Poly<T> res = interal(derivative(a)/a);
+	    res.resize(n);
+	    return res;
+	}
+	template <typename T=mint>
+	Poly<T> exponent(const Poly<T>& a, int n=0) {
+	    assert(!a.empty() && a[0] = 0);
+	    if (!n) n = a.size();
+	    Poly<T> res = {1};
+	    int k = 1;
+	    while (k < n) {
+	        k <<= 1;
+	        Poly<T> x(a.begin(), a.begin() + min((int)a.size(), k));
+	        x -= logarithm(res);
+	        x *= res;
+	        res.resize(k);
+	        for (int i = k>>1; i < k; i++) {
+	            res[i] = x[i];
+	        }
+	    }
+	    res.resize(n);
+	    return res;
+	}
+	
+	using poly=Poly<mint>;
+snippet fwht
+	template <typename T=mint>
+	struct Boly : vector<T> {
+	    using vector<T>::vector;
+	    Boly() {}
+	    Boly(initializer_list<T> list) : vector<T>(list) {}
+	
+	};
+	
+	template <typename T=mint>
+	inline Boly<T>& fwht(Boly<T>& a, bool is_inv=false) {
+	    int n = a.size();
+	    assert((n&(n-1)) == 0);
+	    if (is_inv) {
+	        T i_n = T(1)/n;
+	        for (int i = 0; i < n; i++) {
+	            a[i] *= i_n;
+	        }
+	    }
+	    for (int m = 1; m < n; m<<=1) {
+	        int l = m<<1;
+	        for (int i = 0; i < n; i+=l) {
+	            for (int j = 0; j < m; j++) {
+	                T x = a[i+j];
+	                T y = a[i+j+m];
+	                a[i+j] = x + y;
+	                a[i+j+m] = x - y;
+	            }
+	        }
+	    }
+	    return a;
+	}
+	template <typename T=mint>
+	Boly<T>& operator*=(Boly<T>& a, const Boly<T>& _b) {
+	    int n = max(a.size(), _b.size());
+	    int _n = 1 << (31 - __builtin_clz(n));
+	    if (_n < n) n = _n<<1;
+	    auto b = _b;
+	    a.resize(n); b.resize(n);
+	    fwht(a); fwht(b);
+	    return fwht(a, true);
+	}
+	// note solution could many, (1,1,...,1) * b = 0, if \sum b = 0
+	template <typename T=mint>
+	Boly<T>& operator/=(Boly<T>& a, const Boly<T>& _b) {
+	    int n = max(a.size(), _b.size());
+	    int _n = 1 << (31 - __builtin_clz(n));
+	    if (_n < n) n = _n<<1;
+	    auto b = _b;
+	    a.resize(n); b.resize(n);
+	    fwht(a); fwht(b);
+	    for (int i = 0; i < n; i++) {
+	        a[i] /= b[i];
+	    }
+	    return fwht(a, true);
+	}
+	template <typename T=mint> inline Boly<T> operator*(const Boly<T>& a, const Boly<T>& _b) { Boly<T> res(a); return res *= _b; }
+	template <typename T=mint> inline Boly<T> operator/(const Boly<T>& a, const Boly<T>& _b) { Boly<T> res(a); return res /= _b; }
+	
+	using boly=Boly<mint>;
+snippet exgcd
+	template <typename T=int>
+	T exgcd(T a, T b, T& x, T& y) {
+	    if (!a) { x = 0; y = 1; return b; }
+	    T d = exgcd(b%a, a, y, x);
+	    x -= b/a * y;
+	    return d;
+	}
+snippet perm
+	// make sure permutation is [0..=n-1]
+	struct Perm : vector<int> {
+	    using vector<int>::vector;
+	    Perm() {}
+	    Perm(initializer_list<int> list) : vector<int>(list) {}
+	
+	};
+	
+	Perm& operator*=(Perm& a, const Perm& b) {
+	    assert(a.size() == b.size());
+	    int n = a.size();
+	    Perm _a(a);
+	    for (int i = 0; i < n; i++) {
+	        a[i] = _a[b[i]];
+	    }
+	    return a;
+	}
+	Perm operator*(const Perm& a, const Perm& b) {
+	    assert(a.size() == b.size());
+	    int n = a.size();
+	    Perm c(n);
+	    for (int i = 0; i < n; i++) {
+	        c[i] = a[b[i]];
+	    }
+	    return c;
+	}
+	Perm pinv(const Perm& a) {
+	    int n = a.size();
+	    Perm c(n);
+	    for (int i = 0; i < n; i++) {
+	        c[a[i]] = i;
+	    }
+	    return c;
+	}
+	Perm& operator/=(Perm& a, const Perm& b) {
+	    return a *= pinv(b);
+	}
+	Perm operator/(const Perm& a, const Perm& b) {
+	    return a * pinv(b);
+	}
+	Perm ppow(Perm a, int64_t e) {
+	    if (e < 0) {
+	        a = pinv(a);
+	        e *= -1;
+	    }
+	    int n = a.size();
+	    Perm c(n);
+	    iota(c.begin(), c.end(), 0);
+	    for (; e; e>>=1) {
+	        if (e&1) c *= a;
+	        a *= a;
+	    }
+	    return c;
+	}
+	int cycles_cnt(Perm a) {
+	    int cnt = 0, n = a.size();
+	    for (int i = 0; i < n; i++) {
+	        if (~a[i]) {
+	            cnt++;
+	            for (int j = i; ~a[j];) {
+	                int nxt = a[j];
+	                a[j] = -1;
+	                j = nxt;
+	            }
+	        }
+	    }
+	    return cnt;
+	}
+# geometry
+snippet convex_hull
+	template <typename T>
+	struct Line {
+	    T k, b;
+	    Line() {}
+	    Line(const Line<T>& _r) : k(_r.k), b(_r.b) {}
+	    Line(T _k, T _b) : k(_k), b(_b) {}
+
+	    inline T eval(T x) const{
+	        return k*x + b;
+	    }
+	    // act like point
+	    Line<T>& operator-=(const Line<T>& _r) {
+	        k -= _r.k; b -= _r.b;
+	        return *this;
+	    }
+	    friend Line<T> operator-(const Line<T>& _lhs, const Line<T>& _rhs) {
+	        return Line<T>(_lhs) -= _rhs;
+	    }
+	   // T cross(const Line<T>& _r) {
+	   //     return k*_r.b - b*_r.k;
+	   // }
+	    // watch out whether overflow
+	    inline long double cross(const Line<T>& _r) const{
+	        return (long double) k*_r.b - (long double) b*_r.k;
+	    }
+	};
+
+	// when range [l, r), has property P~notP, want last P.
+	// when return l-1, means not found.
+	template <typename T>
+	T bs_last(T l, T r, function<bool (T)> f) {
+	    assert(l < r);
+	    T mid;
+	    while (l != r) {
+	        mid = l + (r-l)/2;
+	        if (f(mid)) {
+	            l = mid + 1;
+	        }else {
+	            r = mid;
+	        }
+	    }
+	    return r-1;
+	}
+	template <typename T>
+	struct Convex {// max
+	    vector<Line<T>> hull;
+
+	    inline void add_line(T k, T b) {
+	        // k must be monotonic
+	        Line<T> ln(k, b);
+	        // if k inc. <= 0
+	        while ((int) hull.size() > 1 && (ln - hull.back()).cross(ln - *(hull.rbegin()+1)) >= 0) {
+	            hull.pop_back();
+	        }
+	        hull.push_back(ln);
+	    }
+	    inline T query(T x) {
+	        int id = bs_last<int>(0, (int)hull.size(), [&](int i){
+	                if (i == 0) return true;
+	                return hull[i].eval(x) >= hull[i-1].eval(x);
+	                });
+	        return hull[id].eval(x);
+	    }
+	};
+
+	using Ch=Convex<long long>;
+snippet convex_dynamic
+	using ll=long long;
+	
+	const ll is_query = -(1ll<<62);
+	struct Line {
+	    ll k, b;
+	    Line() {}
+	    Line(const Line& _r) : k(_r.k), b(_r.b) {}
+	    Line(ll _k, ll _b) : k(_k), b(_b) {}
+	
+	    inline ll eval(ll x) const{
+	        return k*x + b;
+	    }
+	    // act like point
+	    Line& operator-=(const Line& _r) {
+	        k -= _r.k; b -= _r.b;
+	        return *this;
+	    }
+	    friend Line operator-(const Line& _lhs, const Line& _rhs) {
+	        return Line(_lhs) -= _rhs;
+	    }
+	   // ll cross(const Line& _r) const{
+	   //     return k*_r.b - b*_r.k;
+	   // }
+	    // watch out whether overflow
+	    inline long double cross(const Line& _r) const{
+	        return (long double) k*_r.b - (long double) b*_r.k;
+	    }
+	
+	    mutable function<const Line* ()> succ;
+	    
+	    bool operator < (const Line& _r) const{
+	        if (_r.b != is_query) return k < _r.k || (k==_r.k && b<_r.b);
+	        const Line* s = succ();
+	        if (!s) return false;
+	        return eval(_r.k) < s->eval(_r.k);
+	    }
+	};
+	struct Hull: public multiset<Line> {// max
+	    inline bool bad(iterator it) {
+	        auto z = next(it);
+	        if (z == end()) return false;
+	        if (it == begin()) {
+	            return it->k == z->k;
+	        }
+	        auto x = prev(it);
+	        return (*z - *it).cross(*it - *x) <= 0;
+	    }
+	    inline void add_line(ll k, ll b) {
+	        auto it = insert({k, b});
+	        if (bad(it)) { erase(it); return; }
+	        it->succ = [=] { return next(it)==end()? 0: &*next(it); };
+	        while (next(it) != end() && bad(next(it))) {
+	            erase(next(it));
+	        }
+	        while (it != begin() && bad(prev(it))) {
+	            erase(prev(it));
+	        }
+	    }
+	    inline ll query(ll x) {
+	        auto it = lower_bound((Line){x, is_query});
+	        return it->eval(x);
+	    }
+	};
 # algo
 snippet kmp
 	const int N = 1005, P = 55;
@@ -676,11 +2380,11 @@ snippet bs_first
 	// when range [l, r), has property notP~P, want first P.
 	// when return r, means not found.
 	template <typename T>
-	T bs_fisrt(T l, T r, function<bool (T)> f) {
+	T bs_first(T l, T r, function<bool (T)> f) {
 	    assert(l < r);
 	    T mid;
 	    while (l != r) {
-	        mid = (l+r)/2;
+	        mid = l + (r-l)/2;
 	        if (f(mid)) {
 	            r = mid;
 	        }else {
@@ -697,7 +2401,7 @@ snippet bs_last
 	    assert(l < r);
 	    T mid;
 	    while (l != r) {
-	        mid = (l+r)/2;
+	        mid = l + (r-l)/2;
 	        if (f(mid)) {
 	            l = mid + 1;
 	        }else {
@@ -705,6 +2409,25 @@ snippet bs_last
 	        }
 	    }
 	    return r-1;
+	}
+snippet histo
+	// make sure data in d[1..=n], and >= 0.
+	template <typename T=int>
+	T max_area(const vector<T>& d, int n=0) {
+	    if (!n) n = d.size() - 2;
+	    assert(n > 0 && d[0] == 0 && d[n+1] == 0);
+	    vector<int> stk; stk.reserve(n+2);
+	    stk.emplace_back(0);
+	    T res = 0;
+	    for (int i = 1; i <= n+1; i++) {
+	        while (d[i] < d[stk.back()]) {
+	            T ht = d[stk.back()]; stk.pop_back();
+	            T tmp = ht * (i - stk.back() - 1);
+	            res = max(res, tmp);
+	        }
+	        stk.emplace_back(i);
+	    }
+	    return res;
 	}
 # *
 snippet bitop
@@ -718,3 +2441,50 @@ snippet bitop
 	#define unset(x, p) ((x) &= (~(1<<(p))))
 	#define flip(x, p) ((x) ^= (1<<(p)))
 	#define ck(x, p) ((x) & (1<<(p)))
+snippet compress
+	template <typename T=int>
+	struct Compress {
+	    map<T, int> id;
+	    vector<T> num;
+	
+	    inline int get_id(T x) {
+	        if (!id.count(x)) {
+	            id[x] = num.size();
+	            num.emplace_back(x);
+	        }
+	        return id[x];
+	    }
+	    inline int get_num(int i) {
+	        assert(0 <= i && i < num.size());
+	        return num[i];
+	    }
+	};
+snippet compress_order
+	template <typename T=int>
+	struct Compress {
+	    map<T, int> id;
+	    vector<T> num;
+	
+	    Compress(vector<T> v) {
+	        sort(v.begin(), v.end());
+	        v.erase(unique(v.begin(), v.end()), v.end());
+	        num = v;
+	        for (int i = 0; i < (int)num.size(); i++) {
+	            id[num[i]] = i;
+	        }
+	    }
+	
+	    inline int get_id(T x) {
+	        assert(id.count(x));
+	        return id[x];
+	    }
+	    inline T get_num(int i) {
+	        assert(0 <= i && i < num.size());
+	        return num[i];
+	    }
+	};
+## snip of snip
+snippet snip_start
+	// SNIPPETS_START
+snippet snip_end
+	// SNIPPETS_END
