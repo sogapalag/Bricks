@@ -165,6 +165,7 @@ snippet wh
 snippet st
 	struct ${1:Node} {
 		${0:${VISUAL}}
+	    $1() {}
 	};
 snippet au
 	auto ${1:func} = [${2}](${3}){${0:${VISUAL}}};
@@ -201,6 +202,12 @@ snippet posuv
 snippet dedup
 	sort(${1:a}.begin(), $1.end());
 	$1.erase(unique($1.begin(), $1.end()), $1.end());
+snippet sort
+	sort(${1:a}.begin(), $1.end());
+snippet sortby
+	sort(${1:a}.begin(), $1.end(), [&](auto& u, auto& v){
+	    ${2:return u.x < v.x;}
+	});
 ## template
 #
 snippet template_basic
@@ -308,6 +315,50 @@ snippet fenwick
 	        for (; p > 0; p -= (p&-p)) { tmp += v[p]; }
 	        return tmp;
 	    }
+	    inline T query(int l, int r) {
+	        return query(r) - query(l-1);
+	    }
+	};
+snippet fenwick_pmq
+	// prefix min/max query, 1-based, inclusive[1,p].
+	template <typename T=int>
+	struct Fenwick {
+	    int n;
+	    const T ID = 0x3f3f3f3f;
+	    vector<T> v;
+	    
+	    inline void comb(T& r, const T& val) {
+	        r = min(r, val);
+	    }
+	    Fenwick(int size = 100005) : n(size), v(n+1, ID) {}
+	    inline void add(int p, T val) {
+	        for (; p <= n; p += (p&-p)) { comb(v[p], val); }
+	    }
+	    inline T query(int p) {
+	        T tmp = ID;
+	        for (; p > 0; p -= (p&-p)) { comb(tmp, v[p]); }
+	        return tmp;
+	    }
+	};
+snippet fenwick_variant
+	template <typename T=int>
+	struct Fenwick {
+	    using F=function<T(T,T)>;
+	    int n;
+	    F f;
+	    int id;
+	    vector<T> v;
+	    
+	    Fenwick(int _n, F _f, T _id) : n(_n), f(_f), id(_id), v(n+1, id) {}
+	    inline void add(int p, T val) {
+	        for (; p <= n; p += (p&-p)) { v[p] = f(v[p], val); }
+	    }
+	    inline T query(int p) {
+	        T tmp = id;
+	        for (; p > 0; p -= (p&-p)) { tmp = f(tmp, v[p]); }
+	        return tmp;
+	    }
+	    // when f invertible, e.g. +
 	    inline T query(int l, int r) {
 	        return query(r) - query(l-1);
 	    }
@@ -1665,7 +1716,7 @@ snippet modular
 	using namespace math;
 	typedef modular<int> mint;
 snippet modular_sim
-	const int MOD = 1000000007; // 998244353
+	const int MOD = 1000000007; // 998244353; // 998244853;
 	
 	template <typename T>
 	struct modular {
@@ -1743,6 +1794,63 @@ snippet mod_table
 	    }
 	};
 	build();
+snippet mod_table_st
+	struct Comb {
+	    int N;
+	    vector<mint> fac, ifac, inv;
+	
+	    Comb(int _n=1) {
+	        resize(2);
+	        fac[0] = fac[1] = ifac[0] = ifac[1] = inv[1] = 1;
+	        N = 1; grow(_n);
+	    }
+	
+	    void resize(int _s) {
+	        fac.resize(_s); ifac.resize(_s); inv.resize(_s);
+	    }
+	    bool grow(int _n) {
+	        if (_n <= N) return false;
+	        swap(_n, N); resize(N+1);
+	        for (int i = _n+1; i <= N; i++) {
+	            fac[i] = fac[i-1] * i;
+	            inv[i] = (-MOD/i) * inv[MOD%i];
+	            ifac[i] = ifac[i-1] * inv[i];
+	        }
+	        return true;
+	    }
+	    // perm
+	    mint a(int n, int k) {
+	        if (n < k || k < 0) return 0;
+	        if (n > N) grow(n);
+	        return fac[n] * ifac[n-k];
+	    }
+	    // choose
+	    mint c(int n, int k) {
+	        if (n < k || k < 0) return 0;
+	        if (n > N) grow(n);
+	        return fac[n] * ifac[n-k] * ifac[k];
+	    }
+	    // sum x = s, x > 0
+	    mint p(int s, int k) {
+	        return c(s-1, k-1);
+	    }
+	    // sum x = s, x >= 0
+	    mint z(int s, int k) {
+	        return p(s+k, k);
+	    }
+	    // \E Y-X >= m
+	    mint hit(int n, int k, int m=1) {
+	        if (m <= k-n) return c(n+k, n);
+	        return c(n+k, k-m);
+	    }
+	    // catalan trapezoids C_m(n, k)
+	    // \A Y-X < m,  =c(n+k,n) - hit
+	    mint cat(int n, int k, int m=1) {
+	        if (m > k) return c(n+k, n);
+	        if (m <= k-n) return 0;
+	        return c(n+k,n) - c(n+k, k-m);
+	    }
+	};
 snippet matrix
 	namespace math {
 	    // A = A X B, 0-based, n:dim
@@ -2216,6 +2324,16 @@ snippet perm
 	    }
 	    return cnt;
 	}
+snippet pow
+	template <typename T>
+	T pow(T x, int64_t e) {
+	    T res = 1;
+	    for (; e; e >>= 1) {
+	        if (e & 1) res *= x;
+	        x *= x;
+	    }
+	    return res;
+	}
 # geometry
 snippet convex_hull
 	template <typename T>
@@ -2429,6 +2547,299 @@ snippet histo
 	    }
 	    return res;
 	}
+snippet ternary
+	template <typename T=double>
+	pair<T,T> ternary(T l, T r, function<T(T)> f, bool V=true) {
+	    int round = 400;
+	    while (round--) {
+	        T m0 = l + (r-l)/3;
+	        T m1 = r - (r-l)/3;
+	        T f0 = f(m0);
+	        T f1 = f(m1);
+	
+	        if ((f0 < f1) ^ V) {
+	            l = m0;
+	        } else {
+	            r = m1;
+	        }
+	    }
+	    return {l, f(l)};
+	}
+## string
+snippet rabin_karp
+	// text/pattern, ret: match start pos(0-based). method rolling hash
+	vector<int> rabin_karp(const string& t, const string& p) {
+	    const long long R = 843823891;
+	    const long long M = 1637348371;
+	    int n = t.size(), m = p.size();
+	    vector<long long> pw(max(n,m));
+	    pw[0] = 1;
+	    for (int i = 1; i < (int)pw.size(); i++) {
+	        pw[i] = (pw[i-1] * R) % M;
+	    }
+
+	    // sum[i+1] = \sum_[0..=i] t_i * R^i
+	    vector<long long> sum(n+1);
+	    sum[0] = 0;
+	    for (int i = 0; i < n; i++) {
+	        sum[i+1] = (sum[i] + pw[i]*(t[i]-'a'+42)%M) % M;
+	    }
+	    long long hsh = 0;
+	    for (int i = 0; i < m; i++) {
+	        hsh = (hsh + pw[i]*(p[i]-'a'+42)%M) % M;
+	    }
+	    vector<int> pos;
+	    for (int i = 0; i+m <= n; i++) {
+	        if (hsh*pw[i]%M == (sum[i+m]-sum[i]+M)%M)
+	            pos.push_back(i);
+	    }
+	    return pos;
+	}
+snippet rolling_hash
+	using ll=long long;
+	// Rolling Hash
+	struct RHash {
+	    const ll R = 843823891, iR = 1040004855;
+	    const ll M = 1637348371;
+	    vector<ll> a;
+	    vector<ll> pw;
+	    vector<ll> ipw;
+	
+	    RHash() {
+	        assert(mul(R, iR) == 1);
+	        a.resize(256);
+	        iota(a.begin(), a.end(), 42);
+	        const int N = 1'000'006;
+	        pw.resize(N); ipw.resize(N);
+	        pw[0] = 1; ipw[0] = 1;
+	        for (int i = 1; i < N; i++) {
+	            pw[i] = mul(pw[i-1], R);
+	            ipw[i] = mul(ipw[i-1], iR);
+	        }
+	    }
+	
+	    inline ll add(ll x, ll y) {
+	        return (x+y) %M;
+	    }
+	    inline ll sub(ll x, ll y) {
+	        return (x-y + M) %M;
+	    }
+	    inline ll mul(ll x, ll y) {
+	        return (x*y) %M;
+	    }
+	
+	    vector<ll> get_hash(const string& s) {
+	        int n = s.size();
+	        vector<ll> sum(n+1);
+	        sum[0] = 0;
+	        for (int i = 0; i < n; i++) {
+	            sum[i+1] = add(sum[i], mul(pw[i], a[s[i]]));
+	        }
+	        return sum;
+	    }
+	    // s[l..r)
+	    ll get_sub(const vector<ll>& sum, int l, int r) {
+	        return mul(sub(sum[r], sum[l]), ipw[l]);
+	    }
+	};
+snippet z_fn
+	// z[i] = len of lcp of s, s[i..]; lcp(longest common prefix)
+	vector<int> z_fn(const string& s) {
+	    int n = s.size();
+	    vector<int> z(n, 0);
+	    for (int i = 1, l = 0, r = 0; i < n; i++) {
+	        if (i <= r)
+	            z[i] = min(r-i+1, z[i-l]);
+	        while (i+z[i] < n && s[z[i]] == s[i+z[i]]) {
+	            z[i]++;
+	        }
+	        if (i+z[i]-1 > r) {
+	            l = i; r = i+z[i]-1;
+	        }
+	    }
+	    return z;
+	}
+snippet aho_corasick
+	struct AhoCorasick {
+	    static const int N = 26;
+	    static const char A = 'a';
+	    struct Node {
+	        int ch[N];
+	        int fail, cnt;
+	        Node() {
+	            fill(ch, ch+N, 0);
+	            fail = 0;
+	            cnt = 0;
+	        }
+	    };
+	
+	    vector<Node> t; //trie
+	    AhoCorasick() {
+	        t.reserve(200'005);
+	        t.emplace_back();
+	    }
+	    // add pattern
+	    void add(const string& p) {
+	        int x = 0;
+	        for (char c: p) {
+	            int k = c-A;
+	            if (!t[x].ch[k]) {
+	                t[x].ch[k] = t.size();
+	                t.emplace_back();
+	            }
+	            x = t[x].ch[k];
+	        }
+	        t[x].cnt++;
+	    }
+	    // build fail/suffix-link
+	    void build() {
+	        queue<int> q;
+	        for (int i = 0; i < N; i++) {
+	            if (t[0].ch[i])
+	                q.push(t[0].ch[i]);
+	        }
+	        while (!q.empty()) {
+	            int u = q.front(); q.pop();
+	            for (int i = 0; i < N; i++) {
+	                int v = t[u].ch[i];
+	                if (!v) continue;
+	                q.push(v);
+	                int f = t[u].fail;
+	                while (f && !t[f].ch[i]) {
+	                    f = t[f].fail;
+	                }
+	                f = t[v].fail = t[f].ch[i];
+	                t[v].cnt += t[f].cnt;
+	            }
+	        }
+	    }
+	    // res[i]: #match end with i.
+	    vector<int> query(const string& s) {
+	        int n = s.size();
+	        vector<int> res(n);
+	        int x = 0;
+	        for (int i = 0; i < n; i++) {
+	            int k = s[i] - A;
+	            while (x && !t[x].ch[k]) {
+	                x = t[x].fail;
+	            }
+	            x = t[x].ch[k];
+	            res[i] = t[x].cnt;
+	        }
+	        return res;
+	    }
+	};
+snippet suffix_array
+	template <typename T=int>
+	struct Rmq {
+	    vector<T> raw;
+	    static const int LOG = 20;
+	    int k;
+	    int n;
+	    vector<int> st[LOG];
+	    void init(vector<T> _v) { // pass in vec[0, n)
+	        raw = _v;
+	        n = raw.size();
+	        k = 32 - __builtin_clz(n);
+	        for (int j = 0; j < k; j++) {
+	            st[j].resize(n);
+	        }
+	        build();
+	    }
+	    inline int comp(int x, int y) { // DO! > max
+	        return raw[x] < raw[y] ? x : y;
+	    }
+	    void build() {
+	        for (int i = 0; i < n; i++) {
+	            st[0][i] = i;
+	        }
+	        for (int j = 1; j < k; j++) {
+	            for (int i = 0; i + (1<<j) <= n; i++) {
+	                st[j][i] = comp(st[j-1][i], st[j-1][i + (1<<(j-1))]);
+	            }
+	        }
+	    }
+	    // [l, r)
+	    inline int query_id(int l, int r) {
+	        assert(0 <= l && l < r && r <= n);
+	        int j = 31 - __builtin_clz(r - l);
+	        return comp(st[j][l], st[j][r - (1<<j)]);
+	    }
+	    inline T query(int l, int r) {
+	        return raw[query_id(l, r)];
+	    }
+	};
+	
+	struct SuffixArray {
+	    vector<int> sa, rk, lcp;
+	    Rmq<int> r;
+	
+	    SuffixArray(const string& s) {
+	        int n = s.size();
+	        sa.resize(n+1); rk.resize(n+1); lcp.resize(n+1);
+	        for (int i = 0; i < n; i++) {
+	            rk[i] = (int)s[i]+1;
+	        }
+	        rk[n] = 0;
+	        auto S = rk;
+	
+	        int N = sa.size(), m = 260;
+	        auto& x = rk;
+	        auto& y = lcp;
+	        auto _sort = [&](){
+	            vector<int> cnt(m,0);
+	            for (int i = 0; i < N; i++) cnt[x[y[i]]]++;
+	            for (int i = 1; i < m; i++) cnt[i] += cnt[i-1];
+	            for (int i = N-1; i >= 0; i--) sa[--cnt[x[y[i]]]] = y[i];
+	        };
+	        iota(y.begin(), y.end(), 0); _sort();
+	        for (int k = 1, p = 0; k <= N; k <<= 1, p = 0) {
+	            for (int i = N-k; i < N; i++) y[p++] = i;
+	            for (int i = 0; i < N; i++) if (sa[i] >= k) y[p++] = sa[i] - k;
+	            _sort();
+	            swap(x, y);
+	            x[sa[0]] = 0;
+	            p = 1;
+	            for (int i = 1; i < N; i++) {
+	                p += y[sa[i]] != y[sa[i-1]] || y[sa[i]+k] != y[sa[i-1]+k];
+	                x[sa[i]] = p-1;
+	            }
+	            if ((m=p) >= N) break;
+	        }
+	
+	        // rk*sa = I
+	        for (int i = 0; i < N; i++) {
+	            rk[sa[i]] = i;
+	        }
+	        lcp[0] = 0;
+	        for (int i = 0, h = 0; i < N; i++) {
+	            if (!rk[i]) continue;
+	            if (h) h--;
+	            while (S[i+h] == S[sa[rk[i]-1] + h]) {
+	                h++;
+	            }
+	            lcp[rk[i]] = h;
+	        }
+	        // to 0-based, lcp[i] = lcp(rk=i, rk=i+1)
+	        {
+	            for (int i = 0; i < n; i++) {
+	                lcp[i] = lcp[i+1];
+	            }
+	            lcp[n] = 0;
+	        }
+	        r.init(lcp);
+	    }
+	    int get_lcp_by_rank(int a, int b) {
+	        if (a == b) return sa.size()-1 - sa[a];
+	        if (a > b) swap(a, b);
+	        return r.query(a, b);
+	    }
+	    // s[u..], s[v..]
+	    int get_lcp(int u, int v) {
+	        if (u == v) return sa.size()-1 - u;
+	        return get_lcp_by_rank(rk[u], rk[v]);
+	    }
+	};
 # *
 snippet bitop
 	#define ones(x) __builtin_popcount(x)
