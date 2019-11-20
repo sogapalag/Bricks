@@ -633,6 +633,63 @@ snippet heap_shifter
 	};
 	template<class T> using MaxHeap = Shifter<priority_queue<T>>;
 	template<class T> using MinHeap = Shifter<priority_queue<T, vector<T>, greater<T>>>;
+snippet slider
+	// slider of [l,r) r-l=d range min/max
+	// in begin/end, r-l could < d
+	template <typename T=int>
+	struct Slider {
+	    vector<T> a;
+	    int n, d;
+	    deque<int> mi, mx;
+	
+	    vector<int> lid, hid;
+	
+	    Slider(vector<T> _a, int _d) : a(_a), d(_d) {
+	        n = a.size();
+	        lid.resize(n + d);
+	        hid.resize(n + d);
+	        build();
+	    }
+	    void build() {
+	        for (int i = 0; i < n+d-1; i++) {
+	            while (i < n && !mi.empty() && a[mi.back()] >= a[i]) {
+	                mi.pop_back();
+	            }
+	            mi.push_back(i);
+	            lid[i+1] = mi.front();
+	            if (i-d+1 >= 0 && i-d+1 == mi.front()) {
+	                mi.pop_front();
+	            }
+	
+	            while (i < n && !mx.empty() && a[mx.back()] <= a[i]) {
+	                mx.pop_back();
+	            }
+	            mx.push_back(i);
+	            hid[i+1] = mx.front();
+	            if (i-d+1 >= 0 && i-d+1 == mx.front()) {
+	                mx.pop_front();
+	            }
+	        }
+	    }
+	    
+	    // [l, r)
+	    int min_id(int l, int r) {
+	        assert(1 <= r-l && r-l <= d);
+	        if (r-l < d) assert(l == 0 || r == n);
+	        return r < n ? lid[r] : lid[l+d];
+	    }
+	    T get_min(int l, int r) {
+	        return a[min_id(l,r)];
+	    }
+	    int max_id(int l, int r) {
+	        assert(1 <= r-l && r-l <= d);
+	        if (r-l < d) assert(l == 0 || r == n);
+	        return r < n ? hid[r] : hid[l+d];
+	    }
+	    T get_max(int l, int r) {
+	        return a[max_id(l,r)];
+	    }
+	};
 # graph
 snippet graph_sim
 	struct Graph {
@@ -2050,6 +2107,71 @@ snippet graph_2sat
 	            res[i(x)] = res[x] ^ true;
 	        }
 	        return true;
+	    }
+	};
+snippet graph_dinic
+	struct Dinic {
+	    using F = int; const static F INF = 0x3f3f3f3f; 
+	    //using F = long long; const static F INF = 0x3f3f3f3f3f3f3f3f; 
+	    struct Edge {
+	        int v, bro; F cap;
+	        Edge() {}
+	        Edge(int _v, int _bro, F _cap) : v(_v), bro(_bro), cap(_cap) {}
+	    };
+	    vector<Edge> e;
+	    vector<int> pos, cur;
+	    int n, s, t, m;
+	    Dinic(int _n, int _s, int _t) : n(_n), s(_s), t(_t), m(0) {
+	        pos.assign(n, -1);
+	        cur.resize(n);
+	        d.resize(n);
+	        e.reserve(4e5);
+	    }
+	    void add(int u, int v, F c=INF) {
+	        assert(u < n && v < n);
+	        e.emplace_back(v, pos[u], c); pos[u] = m++;
+	        e.emplace_back(u, pos[v], 0); pos[v] = m++;
+	    }
+	    vector<int> d;
+	    // build layer graph
+	    bool bfs() {
+	        fill(d.begin(), d.end(), -1);
+	        d[s] = 0;
+	        queue<int> q; q.push(s);
+	        while (!q.empty()) {
+	            int u = q.front(); q.pop();
+	            for (int i = cur[u] = pos[u]; i != -1; i = e[i].bro) {
+	                int v = e[i].v;
+	                if (d[v] == -1 && e[i].cap != 0) {
+	                    d[v] = d[u] + 1;
+	                    q.push(v);
+	                }
+	            }
+	        }
+	        return d[t] != -1;
+	    }
+	    // find blocking flow
+	    F dfs(int u, F lim) {
+	        if (u == t) return lim;
+	        F tot = 0;
+	        for (int& i = cur[u]; i != -1; i = e[i].bro) {
+	            int v = e[i].v;
+	            if (e[i].cap != 0 && d[v] == d[u] + 1) {
+	                F flow = dfs(v, min(e[i].cap, lim-tot));
+	                tot += flow;
+	                e[i].cap -= flow;
+	                e[i^1].cap += flow;
+	                if (tot == lim) return lim;
+	            }
+	        }
+	        return tot;
+	    }
+	    F flow() {
+	        F res = 0;
+	        while (bfs()) {
+	            res += dfs(s, INF);
+	        }
+	        return res;
 	    }
 	};
 # math
@@ -3781,7 +3903,7 @@ snippet suffix_array
 	            if (h) h--;
 	            while (S[i+h] == S[sa[rk[i]-1] + h]) {
 	                h++;
-st 074	            }
+	            }
 	            lcp[rk[i]] = h;
 	        }
 	        // to 0-based, lcp[i] = lcp(rk=i, rk=i+1)
